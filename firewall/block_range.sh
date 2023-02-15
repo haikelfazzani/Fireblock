@@ -2,7 +2,7 @@
 
 source ./firewall/constants.sh
 
-block_range_ips() {
+block_range() {
     SRC_URL="https://gitlab.com/haikelfazzani/blocklist/-/raw/master/ips/range.txt"
 
     curl -s -X GET \
@@ -48,11 +48,11 @@ block_range_ips() {
 
 (
     set -e
-    block_range_ips
+    block_range
 )
 
 errorCode=$?
 if [ $errorCode -ne 0 ]; then
-    echo "Error in block_range_ips: $errorCode"
+    echo "Error in block_range file: $errorCode"
     exit $errorCode
 fi

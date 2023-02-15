@@ -2,7 +2,7 @@
 
 source ./firewall/constants.sh
 
-block_malicious_ips() {
+block_ips() {
     SRC_URL="https://gitlab.com/haikelfazzani/blocklist/-/raw/master/ips/malicious.txt"
 
     curl -s -X GET \
@@ -45,11 +45,11 @@ block_malicious_ips() {
 
 (
     set -e
-    block_malicious_ips
+    block_ips
 )
 
 errorCode=$?
 if [ $errorCode -ne 0 ]; then
-    echo "Error in block_malicious_ips: $errorCode"
+    echo "Error in block_ips file: $errorCode"
     exit $errorCode
 fi

@@ -14,7 +14,7 @@ cleanOldRules() {
   $IPT -P FORWARD ACCEPT
 }
 
-applyRules() {
+applyNewRules() {
   iptables -A INPUT -i lo -j ACCEPT
   iptables -A OUTPUT -o lo -j ACCEPT
   iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
@@ -65,11 +65,11 @@ applyRules() {
 (
   set -e
   cleanOldRules
-  applyRules
+  applyNewRules
 )
 
 errorCode=$?
 if [ $errorCode -ne 0 ]; then
-  echo "Error in common-rules: $errorCode"
+  echo "Error in `common-rules` file: $errorCode"
   exit $errorCode
 fi
