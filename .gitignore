@@ -1,0 +1,12 @@
+test
+node_modules
+.cache
+.vscode
+testr
+temp
+testfile
+test.js
+test.sh
+*.tmp
+
+package-lock.json
