@@ -1,5 +1,5 @@
 # Fireblock
-Block Malware, phishing and malicious IPs and websites with on click
+Block Malware, phishing and malicious (IPs and websites)
 
 # IPtables installation
 ```shell
