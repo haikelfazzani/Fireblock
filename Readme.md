@@ -9,22 +9,22 @@ apt install ipset iptables netfilter-persistent ipset-persistent iptables-persis
 # Commands
 ***block websites: update /etc/hosts***
 ```shell
-bash ./hosts-file/index.sh
+bash hosts-file/index.sh
 ```
 
 ***update firewall rules for range ips***
 ```shell
-bash ./firewall/block_range.sh
+bash firewall/block_range.sh
 ```
 
 ***update firewall rules for list ips***
 ```shell
-bash ./firewall/block_ips.sh
+bash firewall/block_ips.sh
 ```
 
 ***update firewall rules for common rules***
 ```shell
-bash ./firewall/common-rules.sh
+bash firewall/common-rules.sh
 ```
 
 ***update all***
@@ -34,14 +34,14 @@ bash update-all.sh
 
 ## Some useful iptables rules
 
-**DROP RFC1918 PACKETS**
+***DROP RFC1918 PACKETS***
 ```shell
 -A INPUT -s 10.0.0.0/8 -j DROP
 -A INPUT -s 172.16.0.0/12 -j DROP
 -A INPUT -s 192.168.0.0/16 -j DROP
 ```
 
-**Outbound UDP Flood protection**
+***Outbound UDP Flood protection***
 ```shell
 iptables -N udp-flood
 iptables -A OUTPUT -p udp -j udp-flood
@@ -50,7 +50,7 @@ iptables -A udp-flood -j LOG --log-level 4 --log-prefix 'UDP-flood attempt: '
 iptables -A udp-flood -j DROP
 ```
 
-**prevent flooding general**
+***prevent flooding general***
 ```shell
 iptables -N udp-flood
 iptables -A udp-flood -m limit --limit 4/second --limit-burst 4 -j RETURN
@@ -59,7 +59,7 @@ iptables -A INPUT -i eth0 -p udp -j udp-flood
 iptables -A INPUT -i eth0 -f -j DROP
 ```
 
-**prevent amplification attack**
+***prevent amplification attack***
 ```shell
 iptables -N DNSAMPLY
 iptables -A DNSAMPLY -p udp -m state --state NEW -m udp --dport 53 -j ACCEPT
