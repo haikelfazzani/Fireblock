@@ -7,7 +7,19 @@ Green='\033[0;32m'  # Green
 Yellow='\033[0;33m' # Yellow
 
 # update /etc/hosts
-declare -a remote_files=("_domains" "apple" "cloudfront" "common" "facebook" "google" "microsoft" "msn" "twitter" "yahoo")
+declare -a remote_files=(
+  "_domains"
+  "apple"
+  "cloudfront"
+  "common"
+  "facebook"
+  "google"
+  "microsoft"
+  "msn"
+  "twitter"
+  "yahoo"
+)
+
 TEMP_FILE_PATH='./hosts-file/hosts_file.tmp'
 HOSTS_FILE_PATH='/etc/hosts'
 
@@ -39,7 +51,7 @@ for i in "${remote_files[@]}"; do
   domains=$(curl -s -X GET \
     -H "Content-type: text/plain; charset=UTF-8" \
     -H "Accept: text/plain; charset=UTF-8" \
-    "https://gitlab.com/haikelfazzani/blocklist/-/raw/master/hosts/_domains.txt")
+    "https://gitlab.com/haikelfazzani/blocklist/-/raw/master/hosts/$i.txt")
 
   echo "$domains" | sed 's/[|^]//g; /^$/d; s/ *$//' | sed -E "/^[^#]/ s/^/0.0.0.0       /" >>$TEMP_FILE_PATH
   echo -e "> ${Yellow} [End Processing] $i ${Color_Off}"

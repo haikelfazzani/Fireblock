@@ -1,9 +1,9 @@
 #!/bin/bash
 
-bash ./hosts-file/index.sh
+./hosts-file/index.sh
 
-bash ./firewall/common-rules.sh
+./firewall/common-rules.sh
 
-bash ./firewall/block_range.sh
+./firewall/block_range.sh
 
-bash ./firewall/block_ips.sh
+./firewall/block_ips.sh
