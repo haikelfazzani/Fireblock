@@ -9,15 +9,6 @@ Yellow='\033[0;33m' # Yellow
 # update /etc/hosts
 declare -a remote_files=(
   "_domains"
-  "apple"
-  "cloudfront"
-  "common"
-  "facebook"
-  "google"
-  "microsoft"
-  "msn"
-  "twitter"
-  "yahoo"
 )
 
 TEMP_FILE_PATH='./hosts-file/hosts_file.tmp'
