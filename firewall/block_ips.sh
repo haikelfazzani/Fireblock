@@ -2,34 +2,64 @@
 
 source ./firewall/constants.sh
 
-block_ips() {
-    SRC_URL="https://gitlab.com/haikelfazzani/blocklist/-/raw/master/ips/malicious.txt"
+fetch_list_ip() {
+    echo "Start fetching.."
+
+    SRC_URL="https://raw.githubusercontent.com/stamparm/ipsum/master/ipsum.txt"
 
     curl -s -X GET \
-        -H "Content-type: application/json" \
-        -H "Accept: application/json" \
+        -H "Accept: plain/text" \
         "$SRC_URL" >$TEMP_FILE_PATH
 
-    uniq_ips=$(awk '{if (++dup[$0] == 1) print $0;}' $TEMP_FILE_PATH)
+    awk '{if (++dup[$0] == 1) print $0;}' $TEMP_FILE_PATH
 
-    ipset_name="malicious-set"
+    sed -i '/^$/d; / *#/d; /\//d' $TEMP_FILE_PATH
+    sed -i 's/\s.*//' "$TEMP_FILE_PATH"
+
+    num_lines=$(wc -l <"$TEMP_FILE_PATH")
+    echo "Total number of IP: $num_lines"
+}
+
+split_temp_file() {
+    echo "Split temp file into chunks.."
+
+    input_file="$TEMP_FILE_PATH"
+    output_dir="temp"
+    max_lines=65000
+
+    if [ ! -d "$output_dir" ]; then
+        mkdir "$output_dir"
+    fi
+
+    split -l $max_lines -d "$input_file" "$output_dir/part_"
+}
+
+process_temp_files() {
+    output_dir="temp"
+    COUNTER=0
+    for file in "$output_dir"/part_*; do
+        update_rules "$file" "$COUNTER"
+        COUNTER=$((COUNTER + 1))
+    done
+}
+
+update_rules() {
+    TEMP_FILE_PART="$1"
+    ipset_name="malicious-ip-$2"
 
     ipset -q flush $ipset_name
     ipset create $ipset_name hash:net -exist
 
-    # echo "$uniq_ips"
-    echo "$uniq_ips" >$TEMP_FILE_PATH
-
-    sed -i '/^$/d; / *#/d; /\//d' $TEMP_FILE_PATH
+    echo -e "UPDATING RULES: $ipset_name ($1)"
 
     while read -r ip; do
         if [[ "$ip" =~ $ipRegexV4 ]]; then
             ipset add $ipset_name $ip -exist
         else
             echo $ip >>$TEMP_FILE_INVALID_PATH
-            sed -i "/$ip/d" $TEMP_FILE_PATH
+            sed -i "/$ip/d" $TEMP_FILE_PART
         fi
-    done <"$TEMP_FILE_PATH"
+    done <"$TEMP_FILE_PART"
 
     ipset save
 
@@ -45,11 +75,13 @@ block_ips() {
 
 (
     set -e
-    block_ips
+    fetch_list_ip
+    split_temp_file
+    process_temp_files
 )
 
 errorCode=$?
 if [ $errorCode -ne 0 ]; then
-    echo "Error in block_ips file: $errorCode"
+    echo "Error in block_ips file: $(basename "$0"):$LINENO - Exit code: $errorCode"
     exit $errorCode
 fi

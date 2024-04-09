@@ -1,7 +1,15 @@
 # Fireblock
-Block Malware, phishing and malicious (IPs and websites)
+Bash scripts to manage firewall rules & hosts file for blocking malware, phishing & malicious domains for a safer internet.
 
-# IPtables installation
+# Getting Started
+
+## Clone the repository
+```shell
+git clone https://github.com/haikelfazzani/Fireblock
+cd Fireblock
+```
+
+## IPtables installation
 ```shell
 apt install ipset iptables netfilter-persistent ipset-persistent iptables-persistent
 ```
@@ -12,12 +20,12 @@ apt install ipset iptables netfilter-persistent ipset-persistent iptables-persis
 bash hosts-file/index.sh
 ```
 
-***update firewall rules for range ips***
+***update firewall rules for range IP***
 ```shell
 bash firewall/block_range.sh
 ```
 
-***update firewall rules for list ips***
+***update firewall rules for list IP***
 ```shell
 bash firewall/block_ips.sh
 ```
@@ -32,7 +40,7 @@ bash firewall/common-rules.sh
 bash update-all.sh
 ```
 
-## Some useful iptables rules
+# Some useful iptables rules
 
 ***DROP RFC1918 PACKETS***
 ```shell
@@ -66,6 +74,10 @@ iptables -A DNSAMPLY -p udp -m state --state NEW -m udp --dport 53 -j ACCEPT
 iptables -A DNSAMPLY -p udp -m hashlimit --hashlimit-srcmask 24 --hashlimit-mode srcip --hashlimit-upto 30/m --hashlimit-burst 10 --hashlimit-name DNSTHROTTLE --dport 53 -j ACCEPT
 iptables -A DNSAMPLY -p udp -m udp --dport 53 -j DROP
 ```
+
+# Contributing
+
+We welcome contributions to improve and expand this project. Feel free to submit pull requests for bug fixes, feature enhancements, or additional security measures.
 
 # Notes
 - [Old Repository of the project](https://gitlab.com/haikelfazzani/hosts)

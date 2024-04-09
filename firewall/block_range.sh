@@ -6,13 +6,12 @@ block_range() {
     SRC_URL="https://gitlab.com/haikelfazzani/blocklist/-/raw/master/ips/range.txt"
 
     curl -s -X GET \
-        -H "Content-type: application/json" \
-        -H "Accept: application/json" \
+        -H "Accept: plain/text" \
         "$SRC_URL" >$TEMP_FILE_PATH
 
     uniq_ips=$(awk '{if (++dup[$0] == 1) print $0;}' $TEMP_FILE_PATH)
 
-    ipset_name="blacklist-range-set"
+    ipset_name="malicious-range"
 
     ipset -q flush $ipset_name
     ipset create $ipset_name hash:net -exist
@@ -53,6 +52,6 @@ block_range() {
 
 errorCode=$?
 if [ $errorCode -ne 0 ]; then
-    echo "Error in block_range file: $errorCode"
+    echo "Error in block_ips file: $(basename "$0"):$LINENO - Exit code: $errorCode"
     exit $errorCode
 fi
